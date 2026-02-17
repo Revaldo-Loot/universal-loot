@@ -18,6 +18,12 @@ const pool = new Pool({
   port: process.env.PGPORT,
 });
 
+// Confirm DB connection
+pool
+  .connect()
+  .then(() => console.log("✅ Connected to PostgreSQL"))
+  .catch((err) => console.error("❌ Database connection error:", err));
+
 // Middleware to check JWT
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
@@ -71,9 +77,7 @@ app.post("/login", async (req, res) => {
     const token = jwt.sign(
       { id: user.id, username: user.username },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      },
+      { expiresIn: "1h" },
     );
     res.json({ message: "Login successful", token });
   } catch (err) {
@@ -137,5 +141,7 @@ app.delete("/items/:id", authenticateToken, async (req, res) => {
 });
 
 // Start server
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Universal Loot running on port ${port}`));
+const port = process.env.PORT || 3000;
+app.listen(port, () =>
+  console.log(`🚀 Universal Loot running on port ${port}`),
+);
